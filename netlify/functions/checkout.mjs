@@ -29,10 +29,10 @@ export default async (req) => {
   }
 
   // ---- validate input ----
-  const name = String(body.customer_name || '').trim();
-  const address = String(body.delivery_address || '').trim();
+  const name = String(body.name ?? body.customer_name ?? '').trim();
+  const address = String(body.address ?? body.delivery_address ?? '').trim();
   const phone = normalizeUgPhone(body.phone);
-  const rawItems = Array.isArray(body.items) ? body.items : [];
+  const rawItems = Array.isArray(body.cart) ? body.cart : Array.isArray(body.items) ? body.items : [];
 
   if (name.length < 2 || name.length > 100) return json({ error: 'Please enter your full name.' }, 400);
   if (address.length < 5 || address.length > 300) return json({ error: 'Please enter a delivery address.' }, 400);
@@ -55,6 +55,12 @@ export default async (req) => {
   }
   const shipping = count === 1 ? SHIPPING_FEE : 0;
   const total = subtotal + shipping;
+
+  // The browser's `amount` is only a sanity check, never used for charging. If it disagrees with the
+  // server's own price, refuse rather than charge the customer something different from what they saw.
+  if (body.amount !== undefined && Number(body.amount) !== total) {
+    return json({ error: 'Prices have changed since you added these items. Please refresh the page and try again.' }, 409);
+  }
 
   // ---- create the order BEFORE asking for payment, so the webhook can always find it ----
   const id = `T2G-${randomBytes(8).toString('hex')}`; // 20 chars (Relworx allows 8-36)

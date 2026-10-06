@@ -125,24 +125,22 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
   <div id="checkoutView" class="hidden flex-1 overflow-y-auto px-6 py-5">
     <div id="orderFlow">
       <button type="button" id="backToCart" class="text-sm font-bold underline underline-offset-4 mb-4">Back to cart</button>
-      <section class="hb p-5 mb-6" style="background:#FFD60A;color:#0E0E0E" aria-label="Mobile Money payment">
-        <p class="text-sm font-bold">Pay with MTN or Airtel Mobile Money</p>
-        <p class="disp text-5xl mt-2" id="payAmount" aria-label="Amount to pay">UGX 0</p>
-        <p class="text-sm mt-3">Enter your Mobile Money number below. We will send a payment prompt to your phone &mdash; just enter your PIN to approve it.</p>
-      </section>
       <form id="orderForm">
         <p class="hidden"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
         <label for="fName" class="block text-sm font-bold mb-1">Full Name</label>
         <input id="fName" name="full_name" type="text" required autocomplete="name" class="hb bg-surf w-full px-3 py-2.5 text-sm mb-4">
-        <label for="fAddr" class="block text-sm font-bold mb-1">Delivery Location / Address</label>
+        <label for="fAddr" class="block text-sm font-bold mb-1">Delivery Address</label>
         <textarea id="fAddr" name="delivery_location" rows="3" required autocomplete="street-address" class="hb bg-surf w-full px-3 py-2.5 text-sm mb-4"></textarea>
-        <label for="fPhone" class="block text-sm font-bold mb-1">Mobile Money Number (MTN or Airtel)</label>
-        <input id="fPhone" name="mtn_phone" type="tel" inputmode="tel" required pattern="[0-9+ ]{9,15}" placeholder="e.g. 0770 000000" autocomplete="tel" class="hb bg-surf w-full px-3 py-2.5 text-sm mb-4">
+        <label for="fPhone" class="block text-sm font-bold mb-1">Phone Number (MTN or Airtel)</label>
+        <input id="fPhone" name="mtn_phone" type="tel" inputmode="tel" required pattern="[0-9+ ]{9,15}" placeholder="e.g. 0771234567" autocomplete="tel" class="hb bg-surf w-full px-3 py-2.5 text-sm mb-4">
         <p id="formError" class="hidden text-xs font-bold mb-3 pl-2" style="border-left:4px solid #B8321F" role="alert"></p>
-        <button type="submit" id="confirmOrder" class="btn btn-acc w-full py-3.5">Pay Now</button>
+        <button type="submit" id="confirmOrder" class="btn btn-acc w-full py-3.5">Pay UGX 0</button>
       </form>
     </div>
     <div id="orderSuccess" class="hidden py-14 text-center" role="status" aria-live="polite" tabindex="-1">
+      <div id="paySpinner" class="hidden mx-auto mb-6 w-16 h-16" aria-hidden="true">
+        <svg viewBox="0 0 50 50" class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="5"><circle cx="25" cy="25" r="20" stroke-opacity=".15"/><path d="M25 5a20 20 0 0 1 20 20" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite"/></path></svg>
+      </div>
       <div id="successIcon" class="mx-auto mb-6 grid place-items-center w-20 h-20 hb" style="background:#FFD60A">
         <svg viewBox="0 0 24 24" class="w-10 h-10" fill="none" stroke="#0E0E0E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
       </div>
@@ -280,7 +278,7 @@ const cartItems=()=>Object.entries(cart).map(([id,q])=>({p:P.find(x=>x.id==id),q
 function orderTotals(){const it=cartItems(),count=it.reduce((a,i)=>a+i.q,0),sub=it.reduce((a,i)=>a+i.q*i.p.price,0);return{it,total:sub+(count===1?SHIP:0)}}
 function showCheckout(){
  const {it,total}=orderTotals();if(!it.length)return;
- $('payAmount').textContent=fmt(total);
+ $('confirmOrder').textContent='Pay '+fmt(total);
  $('drawerTitle').textContent='Checkout';
  $('cartBody').classList.add('hidden');$('cartFoot').classList.add('hidden');
  $('checkoutView').classList.remove('hidden');$('checkoutView').scrollTop=0;
@@ -289,14 +287,15 @@ function resetCheckout(){
  $('drawerTitle').textContent='Your cart';
  $('checkoutView').classList.add('hidden');$('cartBody').classList.remove('hidden');$('cartFoot').classList.remove('hidden');
  $('orderFlow').classList.remove('hidden');$('orderSuccess').classList.add('hidden');$('sendNote').classList.add('hidden');
- $('orderForm').reset();$('confirmOrder').disabled=false;$('confirmOrder').textContent='Pay Now';$('formError').classList.add('hidden');
+ $('orderForm').reset();$('confirmOrder').disabled=false;$('confirmOrder').textContent=payLabel();$('formError').classList.add('hidden');
 }
 $('checkout').addEventListener('click',showCheckout);
 $('backToCart').addEventListener('click',resetCheckout);
 const OKEY='teez2go-order';
-function setPay(icon,title,msg,retry){
+function payLabel(){return 'Pay '+fmt(orderTotals().total)}
+function setPay(icon,title,msg,retry,spin){
  $('orderFlow').classList.add('hidden');$('orderSuccess').classList.remove('hidden');
- $('successIcon').classList.toggle('hidden',!icon);
+ $('successIcon').classList.toggle('hidden',!icon);$('paySpinner').classList.toggle('hidden',!spin);
  $('successTitle').textContent=title;$('successMsg').textContent=msg;
  $('retryPay').classList.toggle('hidden',!retry);
  $('sendNote').classList.add('hidden');
@@ -319,29 +318,30 @@ async function pollOrder(id,n=0){
 }
 $('retryPay').addEventListener('click',()=>{
  $('orderSuccess').classList.add('hidden');$('orderFlow').classList.remove('hidden');
- $('confirmOrder').disabled=false;$('confirmOrder').textContent='Pay Now';
+ $('confirmOrder').disabled=false;$('confirmOrder').textContent=payLabel();
 });
 $('orderForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const f=e.target,btn=$('confirmOrder'),err=$('formError');
  if(btn.disabled)return;
- const {it}=orderTotals();if(!it.length)return;
+ const {it,total}=orderTotals();if(!it.length)return;
  err.classList.add('hidden');
  btn.disabled=true;btn.textContent='Sending payment request…';
  try{
   const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-   items:it.map(i=>({id:i.p.id,qty:i.q})),
-   customer_name:f.elements.full_name.value.trim(),
-   delivery_address:f.elements.delivery_location.value.trim(),
-   phone:f.elements.mtn_phone.value.trim()
+   phone:f.elements.mtn_phone.value.trim(),
+   amount:total,
+   name:f.elements.full_name.value.trim(),
+   address:f.elements.delivery_location.value.trim(),
+   cart:it.map(i=>({id:i.p.id,name:i.p.name,price:i.p.price,qty:i.q}))
   })});
   const d=await res.json().catch(()=>({}));
   if(!res.ok)throw new Error(d.error||'Something went wrong. Please try again.');
   try{localStorage.setItem(OKEY,d.orderId)}catch(x){}
-  setPay(false,'Approve the payment on your phone','We sent a request for '+fmt(d.amount)+' to '+d.phone+'. Enter your Mobile Money PIN to confirm. Keep this page open.');
+  setPay(false,'Prompt sent!','Please check your phone and enter your Mobile Money PIN. Keep this page open.',false,true);
   pollOrder(d.orderId);
  }catch(ex){
-  btn.disabled=false;btn.textContent='Pay Now';
+  btn.disabled=false;btn.textContent=payLabel();
   err.textContent=ex.message;err.classList.remove('hidden');
  }
 });
