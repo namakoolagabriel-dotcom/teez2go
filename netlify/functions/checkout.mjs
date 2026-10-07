@@ -53,7 +53,7 @@ export default async (req) => {
     count += qty;
     subtotal += entry[1] * qty;
   }
-  const discount = Math.min(discountFor(count), subtotal); // multi-buy: 2 items -10,000 / 3+ items -20,000
+  const discount = Math.min(discountFor(count), subtotal); // multi-buy: 2 items -5,000 / 3+ items -10,000
   const shipping = 0; // delivery is free on every order
   const total = subtotal - discount;
 

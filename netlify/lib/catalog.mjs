@@ -23,7 +23,7 @@ export const CATALOG = {
   20: ['USA New York Polo', 40000],
 };
 
-// Multi-buy discount (any mix of items): buy 3+ save UGX 20,000, buy 2 save UGX 10,000.
+// Multi-buy discount (any mix of items): buy 3+ save UGX 10,000, buy 2 save UGX 5,000.
 // Delivery is free on every order. Must match TIERS in public/index.html.
-export const MULTIBUY_TIERS = [[3, 20000], [2, 10000]];
+export const MULTIBUY_TIERS = [[3, 10000], [2, 5000]];
 export const discountFor = (count) => (MULTIBUY_TIERS.find(([n]) => count >= n) || [0, 0])[1];

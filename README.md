@@ -27,7 +27,7 @@ Functions need `npm install` (for @netlify/blobs), which drag-and-drop deploys d
 - View orders: `https://YOUR-SITE.netlify.app/api/admin/orders?status=Paid&token=YOUR_ADMIN_TOKEN`
 
 ## How payment safety works
-- Prices and the multi-buy discount (2 items -10,000 / 3+ items -20,000, free delivery) are recomputed on the server; the browser's total is only a sanity check.
+- Prices and the multi-buy discount (2 items -5,000 / 3+ items -10,000, free delivery) are recomputed on the server; the browser's total is only a sanity check.
 - The webhook is only a trigger. Before marking Paid, the server asks Relworx directly
   (check-request-status) and verifies status AND amount == order total. A forged webhook can't mark an order Paid.
 - Order statuses: Pending, Paid, Failed, Review (money received but amount didn't match: check manually).
