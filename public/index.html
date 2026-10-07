@@ -26,8 +26,9 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
 .chip{border:2px solid var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.03em;transition:background .15s,color .15s}
 .chip:hover,.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;box-shadow:0 0 0 5px var(--ink)}
-.tile{aspect-ratio:4/5;transition:transform .25s}
+.tile{aspect-ratio:1/1;transition:transform .25s}
 .card:hover .tile{transform:rotate(-2deg) scale(1.05)}
+.card:hover .tile.photo{transform:none}
 .tag{background:var(--accent);color:#0E0E0E;border:2px solid #0E0E0E}
 .ban{background:#0E0E0E;color:#F2F1ED;border-bottom:1px solid #FFD60A;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .ban .marquee{animation-duration:48s}
@@ -161,27 +162,29 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
 </aside>
 
 <script>
+let nextId=0;
 const P=[
- ['Core Tee','Tees',40000,'#CFCFCA','#0E0E0E','tee'],
- ['Box Tee','Tees',40000,'#D8D2C4','#E9E6DD','box'],
- ['Pocket Tee','Tees',40000,'#C9CED2','#3A4A5C','tee'],
- ['Longline Tee','Tees',40000,'#D9C9C2','#1B1B1B','long'],
- ['Ringer Tee','Tees',40000,'#CFCFCA','#B8321F','tee'],
- ['Acid Wash Tee','Tees',40000,'#D4D6CF','#6D7068','box'],
- ['Night Shift Graphic Tee','Tees',40000,'#C9CED2','#101820','tee'],
- ['Corner Store Graphic Tee','Tees',40000,'#D8D2C4','#2F5D3A','box'],
- ['Cropped Boxy Tee','Tees',40000,'#D9C9C2','#F2F1ED','crop'],
- ['Fleece Joggers','Sweatpants',50000,'#CFCFCA','#4A4F4D','pants'],
- ['Wide-Leg Sweats','Sweatpants',50000,'#D8D2C4','#0E0E0E','wide'],
- ['Cargo Sweats','Sweatpants',50000,'#C9CED2','#59603F','cargo'],
- ['Cuffed Terry Sweats','Sweatpants',50000,'#D9C9C2','#8C867A','pants'],
- ['Baggy Denim Jorts','Jorts',50000,'#D4D6CF','#3E5A86','jorts'],
- ['Cargo Jorts','Jorts',50000,'#D8D2C4','#6B6A4A','jorts'],
- ['Terry Jorts','Jorts',50000,'#C9CED2','#B7B3A6','jorts'],
- ['Web Belt','Belts',20000,'#CFCFCA','#1B1B1B','belt'],
- ['Chain Belt','Belts',20000,'#D4D6CF','#74777A','chain'],
- ['Leather Belt','Belts',20000,'#D9C9C2','#5E3E27','belt']
-].map((a,i)=>({id:i+1,name:a[0],cat:a[1],price:a[2],bg:a[3],fg:a[4],s:a[5]}));
+ ['Epic PVP Tee','Tees',40000,'#CFCFCA','#0E0E0E','tee','images/tee-1.jpg'],
+ ['Enfants Tee','Tees',40000,'#D8D2C4','#E9E6DD','box','images/tee-2.jpg'],
+ ['Stone Age Tee','Tees',40000,'#C9CED2','#3A4A5C','tee','images/tee-3.jpg'],
+ ['Stop Begin Tee','Tees',40000,'#D9C9C2','#1B1B1B','long','images/tee-4.jpg'],
+ ['Toy Boy Tee','Tees',40000,'#CFCFCA','#B8321F','tee','images/tee-5.jpg'],
+ ['Saint World Wide Tee','Tees',40000,'#D4D6CF','#6D7068','box','images/tee-6.jpg'],
+ ['Stafdrone Tee','Tees',40000,'#C9CED2','#101820','tee','images/tee-7.jpg'],
+ ['Shadow Light Tee','Tees',40000,'#D8D2C4','#2F5D3A','box','images/tee-8.jpg'],
+ ['Startlove Tee','Tees',40000,'#D9C9C2','#F2F1ED','crop','images/tee-9.jpg'],
+ ['USA New York Polo','Tees',40000,'#CFCFCA','#0E0E0E','tee','images/polo-usa-new-york.jpg',20],
+ ['Cross Print Sweats','Sweatpants',50000,'#B1B1B0','#4A4F4D','pants','images/sweats-1.jpg'],
+ ['Metal Logo Sweats','Sweatpants',50000,'#F1F0EE','#0E0E0E','wide','images/sweats-2.jpg'],
+ ['Black Tribal Sweats','Sweatpants',50000,'#FFFFFF','#59603F','cargo','images/sweats-3.jpg'],
+ ['Grey Tribal Sweats','Sweatpants',50000,'#FFFFFF','#8C867A','pants','images/sweats-4.jpg'],
+ ['Faded Black Barrel Jorts','Jorts',50000,'#FFFFFF','#3E5A86','jorts','images/jorts-1.jpg'],
+ ['Raw Denim Jorts','Jorts',50000,'#C4AB9E','#6B6A4A','jorts','images/jorts-2.jpg'],
+ ['Washed Blue Jorts','Jorts',50000,'#2A2927','#B7B3A6','jorts','images/jorts-3.jpg'],
+ ['Silver Floral Belt','Belts',20000,'#D0D0CC','#1B1B1B','belt','images/belt-1.jpg'],
+ ['Dragon Buckle Belt','Belts',20000,'#2A2B2E','#74777A','chain','images/belt-2.jpg'],
+ ['Cross Buckle Belt','Belts',20000,'#FFFFFF','#5E3E27','belt','images/belt-3.jpg']
+].map(a=>({id:a[7]||++nextId,name:a[0],cat:a[1],price:a[2],bg:a[3],fg:a[4],s:a[5],img:a[6]||''}));
 const W='<path d="M30 22h40" stroke="#fff" stroke-opacity=".3" stroke-width="2"/>';
 const SH={
  tee:'<path d="M36 16c3 6 8 9 14 9s11-3 14-9l22 11-8 19-9-4v42H31V42l-9 4-8-19z"/>',
@@ -196,6 +199,7 @@ const SH={
  chain:'<g fill="none" stroke="currentColor" stroke-width="4"><rect x="6" y="43" width="18" height="14" rx="7"/><rect x="21" y="43" width="18" height="14" rx="7"/><rect x="36" y="43" width="18" height="14" rx="7"/><rect x="51" y="43" width="18" height="14" rx="7"/><rect x="66" y="43" width="18" height="14" rx="7"/></g><rect x="82" y="36" width="12" height="28" rx="3"/>'
 };
 const svg=(s,fg)=>`<svg viewBox="0 0 100 100" class="w-full h-full" style="color:${fg};fill:${fg}" role="img" aria-hidden="true">${SH[s]}</svg>`;
+const pic=p=>p.img?`<img src="${p.img}" alt="${p.name}" width="260" height="260" loading="lazy" decoding="async" draggable="false" style="aspect-ratio:1/1;width:100%;height:100%;object-fit:contain;display:block" class="w-full h-full object-contain block">`:svg(p.s,p.fg);
 const $=id=>document.getElementById(id);
 try{if(matchMedia('(prefers-reduced-motion: reduce)').matches){const v=$('bgvid');v.removeAttribute('autoplay');v.pause()}}catch(e){}
 const fmt=n=>'UGX '+n.toLocaleString('en-US');
@@ -219,7 +223,7 @@ function renderGrid(){
  if(sort==='high')list=[...list].sort((a,b)=>b.price-a.price);
  $('resultCount').textContent=`${list.length} ${list.length===1?'piece':'pieces'}`;
  $('grid').innerHTML=list.map(p=>`<article class="card">
-  <div class="hb overflow-hidden relative" style="background:${p.bg}"><div class="tile p-[16%]">${svg(p.s,p.fg)}</div><span class="tag disp absolute bottom-2 left-2 px-2 py-0.5 text-lg">UGX ${p.price/1000}K</span></div>
+  <div class="hb overflow-hidden relative" style="background:${p.bg}"><div class="tile ${p.img?'photo':'p-[16%]'}">${pic(p)}</div><span class="tag disp absolute bottom-2 left-2 px-2 py-0.5 text-lg">UGX ${p.price/1000}K</span></div>
   <div class="mt-3"><h3 class="font-bold leading-tight">${p.name}</h3><p class="t-mute text-sm">${p.cat}</p></div>
   <button data-add="${p.id}" class="chip mt-3 w-full py-2 text-sm">Add to cart</button>
  </article>`).join('');
@@ -238,7 +242,7 @@ function renderCart(){
   $('cartBody').innerHTML=`<div class="py-16 text-center"><h3 class="disp text-4xl">Cart's empty</h3><p class="t-mute mt-3 text-sm">Add two pieces and shipping is free.</p><button data-continue class="chip px-6 py-3 text-sm mt-6">Browse the drop</button></div>`;return;
  }
  $('cartBody').innerHTML=items.map(({p,q})=>`<div class="flex gap-4 py-5 hb-b">
-  <div class="w-20 h-24 hb p-3 shrink-0" style="background:${p.bg}">${svg(p.s,p.fg)}</div>
+  <div class="w-24 h-24 hb ${p.img?'':'p-3'} shrink-0 overflow-hidden" style="background:${p.bg}">${pic(p)}</div>
   <div class="flex-1 flex flex-col justify-between">
    <div class="flex justify-between gap-2"><div><h3 class="font-bold text-sm leading-tight">${p.name}</h3><p class="t-mute text-xs">${p.cat}</p></div><span class="text-sm font-bold">${fmt(p.price*q)}</span></div>
    <div class="flex items-center justify-between">
