@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { CATALOG, SHIPPING_FEE } from '../lib/catalog.mjs';
+import { CATALOG, discountFor } from '../lib/catalog.mjs';
 import { orderStore, json } from '../lib/store.mjs';
 import { requestPayment, relworxConfigured } from '../lib/relworx.mjs';
 
@@ -53,8 +53,9 @@ export default async (req) => {
     count += qty;
     subtotal += entry[1] * qty;
   }
-  const shipping = count === 1 ? SHIPPING_FEE : 0;
-  const total = subtotal + shipping;
+  const discount = Math.min(discountFor(count), subtotal); // multi-buy: 2 items -10,000 / 3+ items -20,000
+  const shipping = 0; // delivery is free on every order
+  const total = subtotal - discount;
 
   // The browser's `amount` is only a sanity check, never used for charging. If it disagrees with the
   // server's own price, refuse rather than charge the customer something different from what they saw.
@@ -71,6 +72,7 @@ export default async (req) => {
     currency: 'UGX',
     items,
     subtotal,
+    discount,
     shipping,
     total,
     customer_name: name,

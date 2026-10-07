@@ -10,18 +10,20 @@ export const CATALOG = {
   7: ['Stafdrone Tee', 40000],
   8: ['Shadow Light Tee', 40000],
   9: ['Startlove Tee', 40000],
-  10: ['Cross Print Sweats', 50000],
-  11: ['Metal Logo Sweats', 50000],
-  12: ['Black Tribal Sweats', 50000],
-  13: ['Grey Tribal Sweats', 50000],
-  14: ['Faded Black Barrel Jorts', 50000],
-  15: ['Raw Denim Jorts', 50000],
-  16: ['Washed Blue Jorts', 50000],
+  10: ['Cross Print Sweats', 45000],
+  11: ['Metal Logo Sweats', 45000],
+  12: ['Black Tribal Sweats', 45000],
+  13: ['Grey Tribal Sweats', 45000],
+  14: ['Faded Black Barrel Jorts', 45000],
+  15: ['Raw Denim Jorts', 45000],
+  16: ['Washed Blue Jorts', 45000],
   17: ['Silver Floral Belt', 20000],
   18: ['Dragon Buckle Belt', 20000],
   19: ['Cross Buckle Belt', 20000],
   20: ['USA New York Polo', 40000],
 };
 
-// Same rule as the storefront: shipping applies only when the cart has exactly 1 item.
-export const SHIPPING_FEE = 10000;
+// Multi-buy discount (any mix of items): buy 3+ save UGX 20,000, buy 2 save UGX 10,000.
+// Delivery is free on every order. Must match TIERS in public/index.html.
+export const MULTIBUY_TIERS = [[3, 20000], [2, 10000]];
+export const discountFor = (count) => (MULTIBUY_TIERS.find(([n]) => count >= n) || [0, 0])[1];

@@ -55,7 +55,7 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
     <a href="#top" class="disp text-3xl">teez2go</a>
     <div class="hidden sm:flex gap-8 text-sm font-bold uppercase">
       <a href="#shop" class="hover:underline underline-offset-4">Shop</a>
-      <a href="#about" class="hover:underline underline-offset-4">Shipping</a>
+      <a href="#about" class="hover:underline underline-offset-4">Deals</a>
     </div>
     <button id="openCart" class="flex items-center gap-2 text-sm font-bold uppercase" aria-label="Open cart">
       Cart <span id="count" class="tag min-w-[1.75rem] h-7 px-1.5 text-sm grid place-items-center">0</span>
@@ -68,7 +68,7 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
   <section class="min-h-[88vh] flex items-center"><div class="max-w-6xl mx-auto px-5 w-full py-12 grid md:grid-cols-2 gap-10 items-center">
     <div>
       <h1 class="disp text-[22vw] md:text-[9.5rem]" style="line-height:1.02"><span class="blk">Teez</span><br><span class="blk">2go.</span></h1>
-      <p class="mt-6 text-lg max-w-md leading-relaxed" style="background:#0E0E0E;color:#fff;padding:.9rem 1rem">Tees, sweats, jorts and belts. Heavy fabric, loose fits, built for the block. Buy two or more and shipping is on us.</p>
+      <p class="mt-6 text-lg max-w-md leading-relaxed" style="background:#0E0E0E;color:#fff;padding:.9rem 1rem">Tees, sweats, jorts and belts. Heavy fabric, loose fits, built for the block. Free delivery on every order. Buy 2 save UGX 10,000, buy 3 save UGX 20,000.</p>
       <div class="mt-8 flex flex-wrap gap-4">
         <a href="#shop" class="btn btn-acc px-7 py-3.5 text-sm" style="box-shadow:4px 4px 0 #fff">Shop all drops</a>
       </div>
@@ -104,8 +104,8 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
 
   <section id="about" style="background:var(--ink);color:var(--bg)">
     <div class="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-8 items-center">
-      <h2 class="disp text-5xl md:text-6xl">Two items.<br>Free shipping.</h2>
-      <p class="text-lg leading-relaxed max-w-lg opacity-80">Add any two pieces to your cart and shipping drops to zero. One item ships for UGX 10,000. Thirty days to return anything that doesn't fit.</p>
+      <h2 class="disp text-5xl md:text-6xl">Buy more.<br>Save more.</h2>
+      <p class="text-lg leading-relaxed max-w-lg opacity-80">Delivery is free on every order. Add any two pieces and take UGX 10,000 off; add three or more and take UGX 20,000 off. Mix tees, sweats, jorts and belts however you like. Thirty days to return anything that doesn't fit.</p>
     </div>
   </section>
 </main>
@@ -128,6 +128,7 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
       <button type="button" id="backToCart" class="text-sm font-bold underline underline-offset-4 mb-4">Back to cart</button>
       <form id="orderForm">
         <p class="hidden"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div id="orderSummary" class="hb p-4 mb-5 text-sm" aria-label="Order summary"></div>
         <label for="fName" class="block text-sm font-bold mb-1">Full Name</label>
         <input id="fName" name="full_name" type="text" required autocomplete="name" class="hb bg-surf w-full px-3 py-2.5 text-sm mb-4">
         <label for="fAddr" class="block text-sm font-bold mb-1">Delivery Address</label>
@@ -154,7 +155,8 @@ body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,-apple-
   </div>
   <div id="cartFoot" class="hb-t px-6 py-5 shrink-0">
     <div class="flex justify-between text-sm mb-1"><span class="t-mute">Subtotal</span><span id="subtotal" class="font-bold">UGX 0</span></div>
-    <div class="flex justify-between text-sm mb-1"><span class="t-mute">Shipping</span><span id="shipping" class="font-bold">—</span></div>
+    <div id="discRow" class="hidden"><div class="flex justify-between text-sm mb-1"><span id="discLabel" class="t-mute">Discount</span><span id="discount" class="font-bold">−UGX 0</span></div></div>
+    <div class="flex justify-between text-sm mb-1"><span class="t-mute">Delivery</span><span id="shipping" class="font-bold">—</span></div>
     <div class="flex justify-between mt-2 pt-2 hb-t font-bold text-lg"><span>Total</span><span id="total">UGX 0</span></div>
     <p class="text-xs t-mute mb-4 mt-2" id="shipNote"></p>
     <button id="checkout" class="btn btn-acc w-full py-3.5" disabled>Checkout</button>
@@ -174,13 +176,13 @@ const P=[
  ['Shadow Light Tee','Tees',40000,'#D8D2C4','#2F5D3A','box','images/tee-8.jpg'],
  ['Startlove Tee','Tees',40000,'#D9C9C2','#F2F1ED','crop','images/tee-9.jpg'],
  ['USA New York Polo','Tees',40000,'#CFCFCA','#0E0E0E','tee','images/polo-usa-new-york.jpg',20],
- ['Cross Print Sweats','Sweatpants',50000,'#B1B1B0','#4A4F4D','pants','images/sweats-1.jpg'],
- ['Metal Logo Sweats','Sweatpants',50000,'#F1F0EE','#0E0E0E','wide','images/sweats-2.jpg'],
- ['Black Tribal Sweats','Sweatpants',50000,'#FFFFFF','#59603F','cargo','images/sweats-3.jpg'],
- ['Grey Tribal Sweats','Sweatpants',50000,'#FFFFFF','#8C867A','pants','images/sweats-4.jpg'],
- ['Faded Black Barrel Jorts','Jorts',50000,'#FFFFFF','#3E5A86','jorts','images/jorts-1.jpg'],
- ['Raw Denim Jorts','Jorts',50000,'#C4AB9E','#6B6A4A','jorts','images/jorts-2.jpg'],
- ['Washed Blue Jorts','Jorts',50000,'#2A2927','#B7B3A6','jorts','images/jorts-3.jpg'],
+ ['Cross Print Sweats','Sweatpants',45000,'#B1B1B0','#4A4F4D','pants','images/sweats-1.jpg'],
+ ['Metal Logo Sweats','Sweatpants',45000,'#F1F0EE','#0E0E0E','wide','images/sweats-2.jpg'],
+ ['Black Tribal Sweats','Sweatpants',45000,'#FFFFFF','#59603F','cargo','images/sweats-3.jpg'],
+ ['Grey Tribal Sweats','Sweatpants',45000,'#FFFFFF','#8C867A','pants','images/sweats-4.jpg'],
+ ['Faded Black Barrel Jorts','Jorts',45000,'#FFFFFF','#3E5A86','jorts','images/jorts-1.jpg'],
+ ['Raw Denim Jorts','Jorts',45000,'#C4AB9E','#6B6A4A','jorts','images/jorts-2.jpg'],
+ ['Washed Blue Jorts','Jorts',45000,'#2A2927','#B7B3A6','jorts','images/jorts-3.jpg'],
  ['Silver Floral Belt','Belts',20000,'#D0D0CC','#1B1B1B','belt','images/belt-1.jpg'],
  ['Dragon Buckle Belt','Belts',20000,'#2A2B2E','#74777A','chain','images/belt-2.jpg'],
  ['Cross Buckle Belt','Belts',20000,'#FFFFFF','#5E3E27','belt','images/belt-3.jpg']
@@ -203,14 +205,15 @@ const pic=p=>p.img?`<img src="${p.img}" alt="${p.name}" width="260" height="260"
 const $=id=>document.getElementById(id);
 try{if(matchMedia('(prefers-reduced-motion: reduce)').matches){const v=$('bgvid');v.removeAttribute('autoplay');v.pause()}}catch(e){}
 const fmt=n=>'UGX '+n.toLocaleString('en-US');
-const SHIP=10000;
+const TIERS=[[3,20000],[2,10000]]; // buy 3+ save UGX 20,000 | buy 2 save UGX 10,000 (any mix of items). Delivery is free on every order.
+const discountFor=n=>(TIERS.find(([k])=>n>=k)||[0,0])[1];
 
 let cat='All',sort='featured',cart={},lastFocus=null;
 try{cart=JSON.parse(localStorage.getItem('teez2go-cart')||'{}')||{}}catch(e){cart={}}
 const save=()=>{try{localStorage.setItem('teez2go-cart',JSON.stringify(cart))}catch(e){}};
 
 const it=(t,c='')=>`<span class="ban-i ${c}">${t}</span><span class="ban-sep"></span>`;
-const msg=it('Free shipping on 2+ items','hl')+it('Tees')+it('Sweatpants')+it('Jorts')+it('Belts');
+const msg=it('Free delivery on every order','hl')+it('Buy 2 save UGX 10K','hl')+it('Buy 3 save UGX 20K','hl')+it('Tees')+it('Sweatpants')+it('Jorts')+it('Belts');
 $('ticker').innerHTML=msg.repeat(4);
 
 const cats=['All',...new Set(P.map(p=>p.cat))];
@@ -231,15 +234,18 @@ function renderGrid(){
 function renderCart(){
  const items=Object.entries(cart).map(([id,q])=>({p:P.find(x=>x.id==id),q})).filter(i=>i.p);
  const count=items.reduce((a,i)=>a+i.q,0),sub=items.reduce((a,i)=>a+i.q*i.p.price,0);
- const ship=count===1?SHIP:0;
+ const discount=Math.min(discountFor(count),sub);
  $('count').textContent=count;
  $('subtotal').textContent=fmt(sub);
- $('shipping').textContent=!count?'—':ship?fmt(ship):'Free';
- $('total').textContent=fmt(sub+ship);
- $('shipNote').textContent=!count?'':count>=2?'Free shipping applied.':'Add one more item for free shipping.';
+ $('discRow').classList.toggle('hidden',!discount);
+ $('discLabel').textContent='Discount ('+(count>=3?'3+ items':'2 items')+')';
+ $('discount').textContent='−'+fmt(discount);
+ $('shipping').textContent=!count?'—':'Free';
+ $('total').textContent=fmt(sub-discount);
+ $('shipNote').textContent=!count?'':count===1?'Free delivery. Add 1 more item and save UGX 10,000.':count===2?'Free delivery. Add 1 more item and save UGX 20,000 in total.':'Free delivery. Maximum discount applied.';
  $('checkout').disabled=!count;
  if(!items.length){
-  $('cartBody').innerHTML=`<div class="py-16 text-center"><h3 class="disp text-4xl">Cart's empty</h3><p class="t-mute mt-3 text-sm">Add two pieces and shipping is free.</p><button data-continue class="chip px-6 py-3 text-sm mt-6">Browse the drop</button></div>`;return;
+  $('cartBody').innerHTML=`<div class="py-16 text-center"><h3 class="disp text-4xl">Cart's empty</h3><p class="t-mute mt-3 text-sm">Buy 2 save UGX 10,000. Buy 3 save UGX 20,000. Free delivery.</p><button data-continue class="chip px-6 py-3 text-sm mt-6">Browse the drop</button></div>`;return;
  }
  $('cartBody').innerHTML=items.map(({p,q})=>`<div class="flex gap-4 py-5 hb-b">
   <div class="w-24 h-24 hb ${p.img?'':'p-3'} shrink-0 overflow-hidden" style="background:${p.bg}">${pic(p)}</div>
@@ -279,9 +285,10 @@ $('openCart').addEventListener('click',openCart);
 $('closeCart').addEventListener('click',closeCart);
 $('scrim').addEventListener('click',closeCart);
 const cartItems=()=>Object.entries(cart).map(([id,q])=>({p:P.find(x=>x.id==id),q})).filter(i=>i.p);
-function orderTotals(){const it=cartItems(),count=it.reduce((a,i)=>a+i.q,0),sub=it.reduce((a,i)=>a+i.q*i.p.price,0);return{it,total:sub+(count===1?SHIP:0)}}
+function orderTotals(){const it=cartItems(),count=it.reduce((a,i)=>a+i.q,0),sub=it.reduce((a,i)=>a+i.q*i.p.price,0),discount=Math.min(discountFor(count),sub);return{it,count,sub,discount,total:sub-discount}}
 function showCheckout(){
- const {it,total}=orderTotals();if(!it.length)return;
+ const t=orderTotals(),{it,total}=t;if(!it.length)return;
+ $('orderSummary').innerHTML=`<div class="flex justify-between mb-1"><span class="t-mute">Subtotal (${t.count} ${t.count===1?'item':'items'})</span><span class="font-bold">${fmt(t.sub)}</span></div>`+(t.discount?`<div class="flex justify-between mb-1"><span class="t-mute">Discount (${t.count>=3?'3+ items':'2 items'})</span><span class="font-bold">−${fmt(t.discount)}</span></div>`:'')+`<div class="flex justify-between mb-1"><span class="t-mute">Delivery</span><span class="font-bold">Free</span></div><div class="flex justify-between pt-2 mt-2 hb-t font-bold text-base"><span>Total</span><span>${fmt(total)}</span></div>`;
  $('confirmOrder').textContent='Pay '+fmt(total);
  $('drawerTitle').textContent='Checkout';
  $('cartBody').classList.add('hidden');$('cartFoot').classList.add('hidden');
